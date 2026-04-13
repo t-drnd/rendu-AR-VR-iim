@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,6 +19,8 @@ public class ObjectSpawner : MonoBehaviour
 
     [Header("Où les objets apparaissent")]
     [SerializeField] private Transform pointDeSpawn;
+
+    private readonly List<GameObject> spawnedObjects = new List<GameObject>();
 
     private void Awake()
     {
@@ -47,6 +50,7 @@ public class ObjectSpawner : MonoBehaviour
         {
             pointDeSpawn = transform;
         }
+
     }
 
     private void Update()
@@ -62,6 +66,8 @@ public class ObjectSpawner : MonoBehaviour
             Spawn(prefabChaise);
         else if (clavier.digit3Key.wasPressedThisFrame)
             Spawn(prefabDecoration);
+        else if (clavier.cKey.wasPressedThisFrame)
+            ResetScene();
     }
 
     private void Spawn(GameObject prefab)
@@ -72,6 +78,21 @@ public class ObjectSpawner : MonoBehaviour
             return;
         }
 
-        Instantiate(prefab, pointDeSpawn.position, pointDeSpawn.rotation);
+        GameObject obj = Instantiate(prefab, pointDeSpawn.position, pointDeSpawn.rotation);
+        spawnedObjects.Add(obj);
+    }
+
+    /// <summary>
+    /// Détruit tous les objets spawnés pour remettre la scène à son état initial.
+    /// </summary>
+    public void ResetScene()
+    {
+        foreach (GameObject obj in spawnedObjects)
+        {
+            if (obj != null)
+                Destroy(obj);
+        }
+        spawnedObjects.Clear();
+        Debug.Log("Scène reset : tous les objets spawnés ont été supprimés.");
     }
 }
