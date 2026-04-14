@@ -34,6 +34,12 @@
 # Visual Studio cache directory
 .vs/
 
+# VS Code editor files
+.vscode/
+
+# Cursor editor files
+.cursor/
+
 # Gradle cache directory
 .gradle/
 
