@@ -2323,7 +2323,7 @@ Transform:
   m_GameObject: {fileID: 439799183}
   serializedVersion: 2
   m_LocalRotation: {x: 0.28180155, y: -0.17997804, z: 0.05390383, w: 0.94089866}
-  m_LocalPosition: {x: 7.478283, y: 5.165675, z: -1.5274208}
+  m_LocalPosition: {x: 0.26, y: 3.3, z: 0.67}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7710,6 +7710,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c2adb4038356943368db83079be8dd71, type: 3}
   m_PrefabInstance: {fileID: 901352993}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1599856694 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8793510976239746625, guid: 8fa5143051527e949b0ae174c8430414, type: 3}
+  m_PrefabInstance: {fileID: 597761985}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1632319858
 GameObject:
   m_ObjectHideFlags: 0
@@ -8318,6 +8323,7 @@ GameObject:
   - component: {fileID: 1789395931}
   - component: {fileID: 1789395933}
   - component: {fileID: 1789395934}
+  - component: {fileID: 1789395935}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -8409,6 +8415,38 @@ MonoBehaviour:
   - {fileID: 919132149155446097, guid: 37b2af91fbb6a4359ab73b03aedcd954, type: 3}
   - {fileID: 919132149155446097, guid: 5fbf36dffe4044e54b0ce825886c8dc0, type: 3}
   player: {fileID: 528532387}
+--- !u!114 &1789395935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1789395930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a35ca03c7b55c4dcc9ed4a9cda263430, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FireHandler
+  action:
+    m_Name: Action
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 88eb0b66-646f-468b-8c89-bf61a9dbe58f
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 48664ae7-d524-4e4f-b854-507185e8ddf5
+      m_Path: <Keyboard>/anyKey
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Action
+      m_Flags: 0
+    m_Flags: 0
+  player: {fileID: 439799187}
+  fire: {fileID: 1599856694}
+  interactionDistance: 5
 --- !u!1001 &1800420378
 PrefabInstance:
   m_ObjectHideFlags: 0
