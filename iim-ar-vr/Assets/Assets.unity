@@ -5194,7 +5194,7 @@ MonoBehaviour:
       m_Action: Action
       m_Flags: 0
     m_Flags: 0
-  player: {fileID: 439799187}
+  player: {fileID: 528532387}
   interactionDistance: 5
   rotateSpeed: 5
 --- !u!1001 &372268874
@@ -7828,7 +7828,7 @@ MonoBehaviour:
       m_Action: Action
       m_Flags: 0
     m_Flags: 0
-  player: {fileID: 439799187}
+  player: {fileID: 528532387}
   interactionDistance: 5
   scaleSpeed: 5
   minScaleZ: 80
@@ -8052,10 +8052,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8793510976239746625, guid: 8fa5143051527e949b0ae174c8430414, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1599856698}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8fa5143051527e949b0ae174c8430414, type: 3}
 --- !u!1001 &598109716
 PrefabInstance:
@@ -20176,21 +20173,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8793510976239746625, guid: 8fa5143051527e949b0ae174c8430414, type: 3}
   m_PrefabInstance: {fileID: 597761985}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1599856698
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1599856694}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69b45d5b004d14a0e8f664efccd026e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraMovement
-  moveSpeed: 5
-  mouseSensitivity: 150
-  jumpForce: 0.3
 --- !u!1001 &1623663225
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22239,7 +22221,7 @@ MonoBehaviour:
       m_Action: Action
       m_Flags: 0
     m_Flags: 0
-  player: {fileID: 439799187}
+  player: {fileID: 528532387}
   fire: {fileID: 1599856694}
   interactionDistance: 5
 --- !u!1001 &1800420378
