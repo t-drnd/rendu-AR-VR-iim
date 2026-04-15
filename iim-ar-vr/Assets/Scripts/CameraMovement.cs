@@ -1,78 +1,77 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
 
+[RequireComponent(typeof(CharacterController))]
 public class CameraMovement : MonoBehaviour
 {
+    public Transform cameraTransform; // à assigner : la Camera enfant
     public float moveSpeed = 5f;
     public float mouseSensitivity = 150f;
-    public float jumpForce = 0.3f;
+    public float jumpForce = 5f;
+    public float gravity = -9.81f;
 
+    private CharacterController controller;
     private float rotationX = 0f;
-    private float fixedY;
     private float verticalVelocity = 0f;
-    private bool isJumping = false;
+
+    // Flag global : si true, la souris ne fait plus bouger la caméra (ex. menu UI ouvert)
+    public static bool LookLocked = false;
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
-        fixedY = transform.position.y; // Mémorise la hauteur de départ
+        controller = GetComponent<CharacterController>();
+        if (cameraTransform == null && Camera.main != null)
+            cameraTransform = Camera.main.transform;
     }
 
     void Update()
     {
         var keyboard = Keyboard.current;
         var mouse = Mouse.current;
-
         if (keyboard == null || mouse == null) return;
 
-        // --- Déplacement ZQSD (layout physique AZERTY) ---
+        // --- ZQSD (AZERTY physique) ---
         float moveX = 0f;
         float moveZ = 0f;
-
-        if (keyboard[Key.Z].isPressed) moveZ = 1f;   // Position physique du Z azerty
+        if (keyboard[Key.Z].isPressed) moveZ = 1f;
         if (keyboard[Key.S].isPressed) moveZ = -1f;
-        if (keyboard[Key.Q].isPressed) moveX = -1f;  // Position physique du Q azerty
+        if (keyboard[Key.Q].isPressed) moveX = -1f;
         if (keyboard[Key.D].isPressed) moveX = 1f;
 
-        Vector3 move = transform.right * moveX + transform.forward * moveZ;
+        Vector3 move = (transform.right * moveX + transform.forward * moveZ) * moveSpeed;
 
-        // --- Saut ---
-        if (keyboard[Key.Space].wasPressedThisFrame && !isJumping)
+        // --- Gravité + saut ---
+        if (controller.isGrounded)
         {
-            verticalVelocity = jumpForce;
-            isJumping = true;
+            verticalVelocity = -1f;
+            if (keyboard[Key.Space].wasPressedThisFrame)
+                verticalVelocity = jumpForce;
+        }
+        else
+        {
+            verticalVelocity += gravity * Time.deltaTime;
         }
 
-        if (isJumping)
-        {
-            verticalVelocity -= 0.01f; // Gravité simulée
-            fixedY += verticalVelocity;
-
-            if (fixedY <= transform.position.y - 0.01f || verticalVelocity < -jumpForce)
-            {
-                fixedY = transform.position.y; // Retour à la hauteur d'origine
-                isJumping = false;
-                verticalVelocity = 0f;
-            }
-        }
-
-        // Applique le mouvement en verrouillant Y sauf pendant le saut
-        transform.position = new Vector3(
-            transform.position.x + move.x * moveSpeed * Time.deltaTime,
-            isJumping ? fixedY : transform.position.y,
-            transform.position.z + move.z * moveSpeed * Time.deltaTime
-        );
+        move.y = verticalVelocity;
+        controller.Move(move * Time.deltaTime);
 
         // --- Rotation souris ---
+        if (LookLocked) return;
+
         Vector2 mouseDelta = mouse.delta.ReadValue();
         float mouseX = mouseDelta.x * mouseSensitivity * 0.01f;
         float mouseY = mouseDelta.y * mouseSensitivity * 0.01f;
 
-        rotationX -= mouseY;
-        rotationX = Mathf.Clamp(rotationX, -80f, 80f);
-
+        // Yaw sur le Player (capsule reste verticale)
         transform.Rotate(Vector3.up * mouseX, Space.World);
-        transform.localRotation = Quaternion.Euler(rotationX, transform.localEulerAngles.y, 0f);
+
+        // Pitch uniquement sur la Camera enfant
+        if (cameraTransform != null)
+        {
+            rotationX -= mouseY;
+            rotationX = Mathf.Clamp(rotationX, -80f, 80f);
+            cameraTransform.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
+        }
     }
 }
