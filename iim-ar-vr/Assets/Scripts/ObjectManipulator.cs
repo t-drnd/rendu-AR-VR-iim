@@ -24,6 +24,10 @@ public class ObjectManipulator : MonoBehaviour
     [SerializeField] private float rotateSpeedWheel = 15f;  // deg par cran de molette
     [SerializeField] private float dragSmoothing = 20f;
 
+    [Header("VR")]
+    [Tooltip("Action InputSystem qui reset la scène (ex: bouton B de la manette droite Quest).")]
+    [SerializeField] private InputActionProperty resetSceneAction;
+
     private Transform grabbed;
     private float grabDistance;
     private Rigidbody grabbedRb;
@@ -32,6 +36,34 @@ public class ObjectManipulator : MonoBehaviour
     private void Start()
     {
         if (targetCamera == null) targetCamera = Camera.main;
+
+        if (resetSceneAction.action != null)
+        {
+            resetSceneAction.action.Enable();
+            resetSceneAction.action.performed += OnResetSceneAction;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (resetSceneAction.action != null)
+        {
+            resetSceneAction.action.performed -= OnResetSceneAction;
+        }
+    }
+
+    private void OnResetSceneAction(InputAction.CallbackContext ctx)
+    {
+        var spawner = Object.FindFirstObjectByType<ObjectSpawner>();
+        if (spawner != null)
+        {
+            Debug.Log("[ObjectManipulator] Bouton manette → ResetScene");
+            spawner.ResetScene();
+        }
+        else
+        {
+            Debug.LogWarning("[ObjectManipulator] Aucun ObjectSpawner trouvé dans la scène.");
+        }
     }
 
     private void Update()

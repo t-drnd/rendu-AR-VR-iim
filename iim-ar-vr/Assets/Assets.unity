@@ -7213,6 +7213,11 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!20 &511649956 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 1767192439, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+  m_PrefabInstance: {fileID: 1354677114}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &513068202 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8068073526183931155, guid: b20482f6d839b4fd58200949d7057739, type: 3}
@@ -25989,6 +25994,26 @@ MonoBehaviour:
   rotateSpeedKeys: 90
   rotateSpeedWheel: 15
   dragSmoothing: 20
+  resetSceneAction:
+    m_UseReference: 0
+    m_Action:
+      m_Name: Reset Scene
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: e047422a-0b9a-47e1-91ea-7eb948954abb
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: 56057daa-99e1-41cf-993d-f76b3796a358
+        m_Path: <XRSimulatedController>{RightHand}/primaryButton
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Reset Scene
+        m_Flags: 0
+      m_Flags: 0
+    m_Reference: {fileID: 0}
 --- !u!114 &1877863521
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26008,19 +26033,27 @@ MonoBehaviour:
     prefab: {fileID: 919132149155446097, guid: 37b2af91fbb6a4359ab73b03aedcd954, type: 3}
   - label: Table
     prefab: {fileID: 919132149155446097, guid: 5fbf36dffe4044e54b0ce825886c8dc0, type: 3}
-  targetCamera: {fileID: 0}
+  targetCamera: {fileID: 511649956}
   spawnDistance: 2.5
   toggleKey: 3
   toggleMenuAction:
     m_UseReference: 0
     m_Action:
-      m_Name: 
+      m_Name: Toggle Menu
       m_Type: 0
       m_ExpectedControlType: 
       m_Id: fd65d961-43b1-49dd-9a8d-988abce4fb61
       m_Processors: 
       m_Interactions: 
-      m_SingletonActionBindings: []
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: bafccabf-8d7d-47ba-8330-1086fac6d24b
+        m_Path: <XRSimulatedController>{LeftHand}/primaryButton
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Toggle Menu
+        m_Flags: 0
       m_Flags: 0
     m_Reference: {fileID: 0}
   menuDistance: 1.5
