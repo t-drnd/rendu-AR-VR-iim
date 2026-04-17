@@ -23,6 +23,12 @@ public class DoorHandler : MonoBehaviour
 
     void Update()
     {
+        if (player == null)
+        {
+            if (interactionPrompt != null) interactionPrompt.SetActive(false);
+            return;
+        }
+
         bool inRange = Vector3.Distance(player.position, transform.position) <= interactionDistance;
 
         if (interactionPrompt != null) interactionPrompt.SetActive(inRange);
