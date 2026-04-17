@@ -5,6 +5,7 @@ public class FrigoHandler : MonoBehaviour
 {
     [SerializeField] private InputAction action;
     [SerializeField] private Transform player;
+    [SerializeField] private GameObject interactionPrompt;
     [SerializeField] private float interactionDistance = 2f;
     [SerializeField] private float rotateSpeed = 5f;
 
@@ -16,14 +17,25 @@ public class FrigoHandler : MonoBehaviour
     {
         closedRotation = transform.localRotation;
         openRotation = closedRotation * Quaternion.Euler(0f, 0f, -160f);
+        if (interactionPrompt != null) interactionPrompt.SetActive(false);
     }
 
     void Update()
     {
+        if (player == null)
+        {
+            if (interactionPrompt != null) interactionPrompt.SetActive(false);
+            return;
+        }
+
+        bool inRange = Vector3.Distance(player.position, transform.position) <= interactionDistance;
+
+        if (interactionPrompt != null) interactionPrompt.SetActive(inRange);
+
         if (action.triggered)
         {
             Debug.Log("Action triggered");
-            if (Vector3.Distance(player.position, transform.position) <= interactionDistance)
+            if (inRange)
             {
                 isOpen = !isOpen;
                 Debug.Log(isOpen ? "Le frigo s'ouvre" : "Le frigo se ferme");

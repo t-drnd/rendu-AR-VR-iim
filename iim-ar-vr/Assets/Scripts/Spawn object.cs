@@ -79,20 +79,41 @@ public class ObjectSpawner : MonoBehaviour
         }
 
         GameObject obj = Instantiate(prefab, pointDeSpawn.position, pointDeSpawn.rotation);
+        // Même tag que l'autre spawner : le DestroyHandler nettoie automatiquement
+        // ces objets quand ils tombent sous killY.
+        if (obj.GetComponent<SpawnedObjectTag>() == null)
+            obj.AddComponent<SpawnedObjectTag>();
         spawnedObjects.Add(obj);
     }
 
     /// <summary>
-    /// Détruit tous les objets spawnés pour remettre la scène à son état initial.
+    /// Détruit tous les objets taggés SpawnedObjectTag (touches 1/2/3 + menu Tab),
+    /// SAUF le player et ses enfants (caméra, rig XR) — pour éviter de perdre
+    /// le rendu si un tag traîne par erreur sur le rig.
     /// </summary>
     public void ResetScene()
     {
-        foreach (GameObject obj in spawnedObjects)
+        var players = Object.FindObjectsByType<CharacterController>(FindObjectsSortMode.None);
+        var tagged = Object.FindObjectsByType<SpawnedObjectTag>(FindObjectsSortMode.None);
+        int count = 0;
+        for (int i = 0; i < tagged.Length; i++)
         {
-            if (obj != null)
-                Destroy(obj);
+            if (tagged[i] == null) continue;
+            if (IsUnderAnyPlayer(tagged[i].transform, players)) continue;
+            Destroy(tagged[i].gameObject);
+            count++;
         }
         spawnedObjects.Clear();
-        Debug.Log("Scène reset : tous les objets spawnés ont été supprimés.");
+        Debug.Log($"Scène reset : {count} objet(s) spawné(s) supprimé(s).");
+    }
+
+    private static bool IsUnderAnyPlayer(Transform t, CharacterController[] players)
+    {
+        for (int i = 0; i < players.Length; i++)
+        {
+            var root = players[i].transform;
+            if (t == root || t.IsChildOf(root)) return true;
+        }
+        return false;
     }
 }
