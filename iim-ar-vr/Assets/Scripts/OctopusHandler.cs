@@ -5,6 +5,7 @@ public class OctopusHandler : MonoBehaviour
 {
     [SerializeField] private InputAction action;
     [SerializeField] private Transform player;
+    [SerializeField] private GameObject interactionPrompt;
     [SerializeField] private float interactionDistance = 2f;
     [SerializeField] private float scaleSpeed = 5f;
     [SerializeField] private float minScaleZ = 0.2f;
@@ -17,14 +18,19 @@ public class OctopusHandler : MonoBehaviour
     {
         normalScale = transform.localScale;
         smallScale = new Vector3(normalScale.x, normalScale.y, minScaleZ);
+        if (interactionPrompt != null) interactionPrompt.SetActive(false);
     }
 
     void Update()
     {
+        bool inRange = Vector3.Distance(player.position, transform.position) <= interactionDistance;
+
+        if (interactionPrompt != null) interactionPrompt.SetActive(inRange);
+
         if (action.triggered)
         {
             Debug.Log("Action triggered");
-            if (Vector3.Distance(player.position, transform.position) <= interactionDistance)
+            if (inRange)
             {
                 isSmall = !isSmall;
                 Debug.Log(isSmall ? "Octopus shrink Z" : "Octopus back to normal");
