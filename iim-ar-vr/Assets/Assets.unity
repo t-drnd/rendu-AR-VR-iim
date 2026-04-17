@@ -2192,6 +2192,14 @@ MonoBehaviour:
       m_Groups: 
       m_Action: Action
       m_Flags: 0
+    - m_Name: 
+      m_Id: fad5aabc-52d7-4a75-81f4-6778631958f8
+      m_Path: <QuestTouchPlusController>/primaryButton
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Action
+      m_Flags: 0
     m_Flags: 0
   player: {fileID: 528532387}
   interactionPrompt: {fileID: 442261732}
@@ -5064,6 +5072,14 @@ MonoBehaviour:
       m_Groups: 
       m_Action: Action
       m_Flags: 0
+    - m_Name: 
+      m_Id: 8a2bd072-ed92-4b4c-9136-d1fd15694a18
+      m_Path: <QuestTouchPlusController>/primaryButton
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Action
+      m_Flags: 0
     m_Flags: 0
   player: {fileID: 528532387}
   interactionPrompt: {fileID: 1877449622}
@@ -7286,6 +7302,14 @@ MonoBehaviour:
       m_Groups: 
       m_Action: Action
       m_Flags: 0
+    - m_Name: 
+      m_Id: b823bec1-eefc-459e-ac99-ddafa0511685
+      m_Path: <QuestTouchPlusController>/primaryButton
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Action
+      m_Flags: 0
     m_Flags: 0
   player: {fileID: 528532387}
   interactionPrompt: {fileID: 1276688600}
@@ -7717,6 +7741,14 @@ MonoBehaviour:
     - m_Name: 
       m_Id: db4da2b4-9478-4768-8fc3-2737e9cb713b
       m_Path: <Keyboard>/o
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Action
+      m_Flags: 0
+    - m_Name: 
+      m_Id: f824f61a-5ecd-455e-a25d-68a319ee5429
+      m_Path: <QuestTouchPlusController>/primaryButton
       m_Interactions: 
       m_Processors: 
       m_Groups: 
@@ -21022,6 +21054,52 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 50965e0663a394a5c903ebfb8af18dc0, type: 3}
   m_PrefabInstance: {fileID: 129389057}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1597665465
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1597665467}
+  - component: {fileID: 1597665466}
+  m_Layer: 0
+  m_Name: 'Input Action Manager   '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1597665466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1597665465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 017c5e3933235514c9520e1dace2a4b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.XR.Interaction.Toolkit::UnityEngine.XR.Interaction.Toolkit.Inputs.InputActionManager
+  m_ActionAssets:
+  - {fileID: -944628639613478452, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+--- !u!4 &1597665467
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1597665465}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -8.58712, y: 4.29736, z: -12.03}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1599856694 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8793510976239746625, guid: 8fa5143051527e949b0ae174c8430414, type: 3}
@@ -23371,6 +23449,14 @@ MonoBehaviour:
       m_Groups: 
       m_Action: Action
       m_Flags: 0
+    - m_Name: 
+      m_Id: 911ac7d9-cd98-49d8-846c-3350ba15ec20
+      m_Path: <QuestTouchPlusController>/secondaryButton
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Action
+      m_Flags: 0
     m_Flags: 0
   ObjectsLights:
   - {fileID: 1635203745}
@@ -23407,7 +23493,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1789395930}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d3e530fadabc942d89a6026ca31bcac3, type: 3}
   m_Name: 
@@ -23433,7 +23519,7 @@ MonoBehaviour:
   - {fileID: 919132149155446097, guid: 37b2af91fbb6a4359ab73b03aedcd954, type: 3}
   - {fileID: 919132149155446097, guid: 5fbf36dffe4044e54b0ce825886c8dc0, type: 3}
   player: {fileID: 528532387}
-  playerSpawnPosition: {x: 0, y: 0, z: 0}
+  playerSpawnPosition: {x: -4.23, y: 1.5, z: -8.58}
   killY: -10
 --- !u!114 &1789395935
 MonoBehaviour:
@@ -23458,6 +23544,14 @@ MonoBehaviour:
     - m_Name: 
       m_Id: 48664ae7-d524-4e4f-b854-507185e8ddf5
       m_Path: <Keyboard>/o
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Action
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 5d63e049-03ba-43b1-8f0c-7dc01035a926
+      m_Path: <QuestTouchPlusController>/primaryButton
       m_Interactions: 
       m_Processors: 
       m_Groups: 
@@ -28271,3 +28365,4 @@ SceneRoots:
   - {fileID: 929571040}
   - {fileID: 504930492}
   - {fileID: 492241455}
+  - {fileID: 1597665467}

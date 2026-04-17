@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 /// <summary>
 /// Ouvre un menu runtime (touche Tab) pour choisir un prefab à faire apparaître devant la caméra.
@@ -41,15 +43,119 @@ public class ObjectSpawnManager : MonoBehaviour
         if (targetCamera == null) targetCamera = Camera.main;
         BuildUI();
         SetMenuOpen(false);
+        HookAllInteractorsForDebug();
+    }
+
+    /// <summary>
+    /// Debug : trouve tous les interactors XR dans la scène (y compris inactifs)
+    /// et loggue leurs events. On re-scanne aussi au bout de 1s au cas où le rig
+    /// ne serait pas encore prêt au Start.
+    /// </summary>
+    private void HookAllInteractorsForDebug()
+    {
+        ScanInteractors("Start");
+        Invoke(nameof(ScanLater), 1f);
+    }
+
+    private void ScanLater() => ScanInteractors("T+1s");
+
+    private readonly System.Collections.Generic.HashSet<int> hookedInteractors = new();
+
+    private void ScanInteractors(string label)
+    {
+        var interactors = FindObjectsByType<XRBaseInteractor>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        Debug.Log($"[XR Debug/{label}] {interactors.Length} interactor(s) dans la scène (inactifs inclus).");
+        foreach (var interactor in interactors)
+        {
+            int id = interactor.GetInstanceID();
+            bool activeInHierarchy = interactor.isActiveAndEnabled;
+            string parentName = interactor.transform.parent != null ? interactor.transform.parent.name : "(root)";
+            string iname = $"[{parentName}] {interactor.gameObject.name} ({interactor.GetType().Name}) actif={activeInHierarchy}";
+            Debug.Log($"[XR Debug/{label}] -> {iname}");
+
+            if (hookedInteractors.Contains(id)) continue;
+            hookedInteractors.Add(id);
+
+            string capturedName = iname;
+            interactor.selectEntered.AddListener(args =>
+                Debug.Log($"[XR Debug] {capturedName} SELECT ENTERED sur {args.interactableObject}"));
+            interactor.hoverEntered.AddListener(args =>
+                Debug.Log($"[XR Debug] {capturedName} HOVER ENTERED sur {args.interactableObject}"));
+        }
     }
 
     private void Update()
     {
         var keyboard = Keyboard.current;
-        if (keyboard == null) return;
+        if (keyboard == null)
+        {
+            Debug.LogWarning("[ObjectSpawnManager] Keyboard.current est null — aucun clavier détecté par l'Input System.");
+            return;
+        }
 
         if (keyboard[toggleKey].wasPressedThisFrame)
+        {
+            Debug.Log($"[ObjectSpawnManager] Touche {toggleKey} pressée → menu {(!menuOpen ? "ouvert" : "fermé")}");
             SetMenuOpen(!menuOpen);
+        }
+
+        // Debug : loggue si les selectInput des Near-Far Interactors reçoivent un signal
+        PollNearFarSelectInputs();
+    }
+
+    private UnityEngine.XR.Interaction.Toolkit.Interactors.XRBaseInputInteractor[] cachedInputInteractors;
+    private float nextPollTime;
+
+    private bool dumpedConfig;
+
+    private void PollNearFarSelectInputs()
+    {
+        if (Time.time < nextPollTime) return;
+        nextPollTime = Time.time + 0.2f;
+
+        if (cachedInputInteractors == null || cachedInputInteractors.Length == 0)
+        {
+            cachedInputInteractors = FindObjectsByType<UnityEngine.XR.Interaction.Toolkit.Interactors.XRBaseInputInteractor>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+        }
+
+        // Dump la config des selectInput une seule fois, quand tout est actif
+        if (!dumpedConfig && Time.time > 1.5f)
+        {
+            dumpedConfig = true;
+            foreach (var i in cachedInputInteractors)
+            {
+                if (i == null) continue;
+                var r = i.selectInput;
+                if (r == null)
+                {
+                    Debug.LogWarning($"[XR Config] [{i.transform.parent?.name}] {i.name} selectInput = NULL");
+                    continue;
+                }
+                var actionRef = r.inputActionReferencePerformed;
+                string refName = actionRef != null && actionRef.action != null ? actionRef.action.name : "NULL";
+                string enabled = actionRef != null && actionRef.action != null ? actionRef.action.enabled.ToString() : "?";
+                string bindingsStr = "";
+                if (actionRef != null && actionRef.action != null)
+                {
+                    foreach (var b in actionRef.action.bindings) bindingsStr += b.effectivePath + " | ";
+                }
+                Debug.Log($"[XR Config] [{i.transform.parent?.name}] {i.name} selectInput: mode={r.inputSourceMode} actionRef='{refName}' enabled={enabled} bindings=[{bindingsStr}]");
+            }
+        }
+
+        foreach (var i in cachedInputInteractors)
+        {
+            if (i == null || !i.isActiveAndEnabled) continue;
+            var reader = i.selectInput;
+            if (reader == null) continue;
+            bool performed = reader.ReadIsPerformed();
+            float value = reader.ReadValue();
+            if (performed || value > 0.01f)
+            {
+                Debug.Log($"[XR Input] [{i.transform.parent?.name}] {i.name} selectInput performed={performed} value={value:F2}");
+            }
+        }
     }
 
     private void SetMenuOpen(bool open)
@@ -207,5 +313,27 @@ public class ObjectSpawnManager : MonoBehaviour
         obj.tag = "Untagged";
         // On ajoute un marqueur component pour identifier les objets spawnés
         obj.AddComponent<SpawnedObjectTag>();
+
+        // --- XR : rend l'objet attrapable par les manettes Meta Quest ---
+        var grab = obj.GetComponent<XRGrabInteractable>();
+        if (grab == null) grab = obj.AddComponent<XRGrabInteractable>();
+
+        var rbForGrab = obj.GetComponent<Rigidbody>();
+        if (rbForGrab == null)
+        {
+            rbForGrab = obj.AddComponent<Rigidbody>();
+            rbForGrab.mass = defaultMass;
+        }
+        grab.movementType = XRBaseInteractable.MovementType.Instantaneous;
+        grab.throwOnDetach = true;
+        grab.useDynamicAttach = true;
+
+        // Logs debug : on saura si la manette entre/sort du grab
+        string objName = obj.name;
+        grab.selectEntered.AddListener(args => Debug.Log($"[XR Grab] >>> GRAB START sur '{objName}' par {args.interactorObject}"));
+        grab.selectExited.AddListener(args => Debug.Log($"[XR Grab] <<< GRAB END sur '{objName}'"));
+        grab.hoverEntered.AddListener(args => Debug.Log($"[XR Grab] (hover) rayon pointe sur '{objName}'"));
+
+        Debug.Log($"[ObjectSpawnManager] Spawn '{obj.name}' avec XRGrabInteractable — attrapable par les manettes.");
     }
 }
