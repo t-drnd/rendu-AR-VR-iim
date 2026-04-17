@@ -2199,7 +2199,7 @@ MonoBehaviour:
       m_Flags: 0
     - m_Name: 
       m_Id: fad5aabc-52d7-4a75-81f4-6778631958f8
-      m_Path: <QuestTouchPlusController>/primaryButton
+      m_Path: <XRSimulatedController>{RightHand}/secondaryButton
       m_Interactions: 
       m_Processors: 
       m_Groups: 
@@ -5218,7 +5218,7 @@ MonoBehaviour:
       m_Flags: 0
     - m_Name: 
       m_Id: 8a2bd072-ed92-4b4c-9136-d1fd15694a18
-      m_Path: <QuestTouchPlusController>/primaryButton
+      m_Path: <XRSimulatedController>{RightHand}/secondaryButton
       m_Interactions: 
       m_Processors: 
       m_Groups: 
@@ -6647,7 +6647,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 341.8, y: -64.4}
+  m_AnchoredPosition: {x: 341.8, y: -64.399994}
   m_SizeDelta: {x: 602.8, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &461589615
@@ -7375,7 +7375,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!223 &506624824
 Canvas:
   m_ObjectHideFlags: 0
@@ -7385,7 +7385,7 @@ Canvas:
   m_GameObject: {fileID: 506624820}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 2
   m_Camera: {fileID: 439799186}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -7409,7 +7409,7 @@ RectTransform:
   m_GameObject: {fileID: 506624820}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 461589614}
@@ -7418,9 +7418,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 984.5, y: 531}
+  m_SizeDelta: {x: 1969, y: 1062}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!4 &509326367 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: cbfa63384a817374e94038243826e23c, type: 3}
@@ -7510,7 +7510,7 @@ MonoBehaviour:
       m_Flags: 0
     - m_Name: 
       m_Id: b823bec1-eefc-459e-ac99-ddafa0511685
-      m_Path: <QuestTouchPlusController>/primaryButton
+      m_Path: <XRSimulatedController>{RightHand}/secondaryButton
       m_Interactions: 
       m_Processors: 
       m_Groups: 
@@ -8011,7 +8011,7 @@ MonoBehaviour:
       m_Flags: 0
     - m_Name: 
       m_Id: f824f61a-5ecd-455e-a25d-68a319ee5429
-      m_Path: <QuestTouchPlusController>/primaryButton
+      m_Path: <XRSimulatedController>{RightHand}/secondaryButton
       m_Interactions: 
       m_Processors: 
       m_Groups: 
@@ -10162,7 +10162,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -331.5, y: -64.4}
+  m_AnchoredPosition: {x: -331.5, y: -64.399994}
   m_SizeDelta: {x: 602.80005, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &718166974
@@ -24691,7 +24691,7 @@ MonoBehaviour:
       m_Flags: 0
     - m_Name: 
       m_Id: 911ac7d9-cd98-49d8-846c-3350ba15ec20
-      m_Path: <QuestTouchPlusController>/secondaryButton
+      m_Path: <XRSimulatedController>{LeftHand}/secondaryButton
       m_Interactions: 
       m_Processors: 
       m_Groups: 
@@ -24791,7 +24791,7 @@ MonoBehaviour:
       m_Flags: 0
     - m_Name: 
       m_Id: 5d63e049-03ba-43b1-8f0c-7dc01035a926
-      m_Path: <QuestTouchPlusController>/primaryButton
+      m_Path: <XRSimulatedController>{RightHand}/secondaryButton
       m_Interactions: 
       m_Processors: 
       m_Groups: 

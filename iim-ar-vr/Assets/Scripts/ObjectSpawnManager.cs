@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using UnityEngine.XR.Interaction.Toolkit.UI;
 
 /// <summary>
 /// Ouvre un menu runtime (touche Tab) pour choisir un prefab à faire apparaître devant la caméra.
@@ -26,6 +27,14 @@ public class ObjectSpawnManager : MonoBehaviour
     [SerializeField] private float spawnDistance = 2.5f;
     [SerializeField] private Key toggleKey = Key.Tab;
 
+    [Header("VR Menu")]
+    [Tooltip("Action InputSystem qui ouvre le menu (ex: bouton Menu/Y d'une manette).")]
+    [SerializeField] private InputActionProperty toggleMenuAction;
+    [Tooltip("Distance devant la caméra où le menu est affiché en VR.")]
+    [SerializeField] private float menuDistance = 1.5f;
+    [Tooltip("Échelle du Canvas en WorldSpace (1 unité Canvas = 1 mm réel à 0.001).")]
+    [SerializeField] private float menuScale = 0.002f;
+
     [Header("Physique")]
     [SerializeField] private bool enableGravity = true;
     [SerializeField] private float defaultMass = 1f;
@@ -44,6 +53,26 @@ public class ObjectSpawnManager : MonoBehaviour
         BuildUI();
         SetMenuOpen(false);
         HookAllInteractorsForDebug();
+
+        if (toggleMenuAction.action != null)
+        {
+            toggleMenuAction.action.Enable();
+            toggleMenuAction.action.performed += OnToggleMenuAction;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (toggleMenuAction.action != null)
+        {
+            toggleMenuAction.action.performed -= OnToggleMenuAction;
+        }
+    }
+
+    private void OnToggleMenuAction(InputAction.CallbackContext ctx)
+    {
+        Debug.Log("[ObjectSpawnManager] Bouton manette → menu toggle");
+        SetMenuOpen(!menuOpen);
     }
 
     /// <summary>
@@ -87,16 +116,18 @@ public class ObjectSpawnManager : MonoBehaviour
     private void Update()
     {
         var keyboard = Keyboard.current;
-        if (keyboard == null)
-        {
-            Debug.LogWarning("[ObjectSpawnManager] Keyboard.current est null — aucun clavier détecté par l'Input System.");
-            return;
-        }
-
-        if (keyboard[toggleKey].wasPressedThisFrame)
+        if (keyboard != null && keyboard[toggleKey].wasPressedThisFrame)
         {
             Debug.Log($"[ObjectSpawnManager] Touche {toggleKey} pressée → menu {(!menuOpen ? "ouvert" : "fermé")}");
             SetMenuOpen(!menuOpen);
+        }
+
+        // Si le menu est ouvert, on le maintient face à la caméra (billboard)
+        if (menuOpen && canvas != null && targetCamera != null)
+        {
+            var camT = targetCamera.transform;
+            canvas.transform.position = camT.position + camT.forward * menuDistance;
+            canvas.transform.rotation = Quaternion.LookRotation(canvas.transform.position - camT.position);
         }
 
         // Debug : loggue si les selectInput des Near-Far Interactors reçoivent un signal
@@ -163,6 +194,14 @@ public class ObjectSpawnManager : MonoBehaviour
         menuOpen = open;
         if (panel != null) panel.SetActive(open);
 
+        // Positionne tout de suite le canvas devant la caméra à l'ouverture
+        if (open && canvas != null && targetCamera != null)
+        {
+            var camT = targetCamera.transform;
+            canvas.transform.position = camT.position + camT.forward * menuDistance;
+            canvas.transform.rotation = Quaternion.LookRotation(canvas.transform.position - camT.position);
+        }
+
         if (open)
         {
             previousLockState = Cursor.lockState;
@@ -181,21 +220,52 @@ public class ObjectSpawnManager : MonoBehaviour
 
     private void BuildUI()
     {
-        // Canvas
+        // Canvas en WorldSpace pour la VR : placé devant la caméra à l'ouverture
         GameObject canvasGO = new GameObject("SpawnMenuCanvas");
-        canvasGO.transform.SetParent(transform, false);
+        // Parent = null (dans la scène) pour que le canvas puisse se positionner librement
+        // sans suivre ce GameObject. On le placera manuellement devant la caméra.
         canvas = canvasGO.AddComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.renderMode = RenderMode.WorldSpace;
         canvas.sortingOrder = 100;
-        canvasGO.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        canvasGO.AddComponent<GraphicRaycaster>();
+        canvas.worldCamera = targetCamera;
 
-        // S'assure qu'un EventSystem existe
-        if (FindObjectOfType<UnityEngine.EventSystems.EventSystem>() == null)
+        // En WorldSpace, CanvasScaler sert surtout à gérer la densité de pixels.
+        var scaler = canvasGO.AddComponent<CanvasScaler>();
+        scaler.dynamicPixelsPerUnit = 2f;
+        scaler.referencePixelsPerUnit = 100f;
+
+        // Deux raycasters pour couvrir les deux modes :
+        //  - GraphicRaycaster : clic souris en mode desktop / éditeur
+        //  - TrackedDeviceGraphicRaycaster : rayons XR des manettes Quest
+        canvasGO.AddComponent<GraphicRaycaster>();
+        canvasGO.AddComponent<TrackedDeviceGraphicRaycaster>();
+
+        // Taille de référence du canvas (en unités locales). On scale ensuite en mètres.
+        var canvasRect = canvasGO.GetComponent<RectTransform>();
+        canvasRect.sizeDelta = new Vector2(600, 400);
+        canvasGO.transform.localScale = Vector3.one * menuScale;
+
+        // EventSystem avec module compatible XR : sans XRUIInputModule, les Ray Interactors
+        // ne propagent pas leurs clics vers l'UI.
+        var existingES = FindObjectOfType<UnityEngine.EventSystems.EventSystem>();
+        if (existingES == null)
         {
             GameObject es = new GameObject("EventSystem");
             es.AddComponent<UnityEngine.EventSystems.EventSystem>();
-            es.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
+            es.AddComponent<UnityEngine.XR.Interaction.Toolkit.UI.XRUIInputModule>();
+            Debug.Log("[ObjectSpawnManager] EventSystem créé avec XRUIInputModule.");
+        }
+        else if (existingES.GetComponent<UnityEngine.XR.Interaction.Toolkit.UI.XRUIInputModule>() == null)
+        {
+            // On désactive l'ancien module (ex: InputSystemUIInputModule) pour éviter
+            // le conflit, puis on ajoute le module XR.
+            foreach (var m in existingES.GetComponents<UnityEngine.EventSystems.BaseInputModule>())
+            {
+                m.enabled = false;
+                Debug.Log($"[ObjectSpawnManager] Ancien module UI désactivé : {m.GetType().Name}");
+            }
+            existingES.gameObject.AddComponent<UnityEngine.XR.Interaction.Toolkit.UI.XRUIInputModule>();
+            Debug.Log("[ObjectSpawnManager] XRUIInputModule ajouté à l'EventSystem existant.");
         }
 
         // Panel background
@@ -257,8 +327,10 @@ public class ObjectSpawnManager : MonoBehaviour
             label.fontSize = 18;
 
             GameObject captured = entry.prefab;
+            string capturedLabel = entry.label;
             button.onClick.AddListener(() =>
             {
+                Debug.Log($"[ObjectSpawnManager] Bouton '{capturedLabel}' cliqué → SpawnInFront");
                 SpawnInFront(captured);
                 SetMenuOpen(false);
             });
@@ -333,6 +405,14 @@ public class ObjectSpawnManager : MonoBehaviour
         grab.selectEntered.AddListener(args => Debug.Log($"[XR Grab] >>> GRAB START sur '{objName}' par {args.interactorObject}"));
         grab.selectExited.AddListener(args => Debug.Log($"[XR Grab] <<< GRAB END sur '{objName}'"));
         grab.hoverEntered.AddListener(args => Debug.Log($"[XR Grab] (hover) rayon pointe sur '{objName}'"));
+
+        // Supprimer l'objet tenu quand on presse le trigger (activate) — il faut le tenir d'abord avec le grip
+        GameObject objRef = obj;
+        grab.activated.AddListener(args =>
+        {
+            Debug.Log($"[XR Grab] Suppression de '{objName}' (trigger pressé en grab)");
+            Destroy(objRef);
+        });
 
         Debug.Log($"[ObjectSpawnManager] Spawn '{obj.name}' avec XRGrabInteractable — attrapable par les manettes.");
     }
